@@ -1,3 +1,38 @@
-Test File
+### Project Plan: Threat Analysis Tool
 
-Hello.. This is my new file. Hello
+#### Objective
+Develop a CLI-based Threat Analysis Tool that integrates with VirusTotal for security checks and provides AI-powered analysis.
+
+#### Team Roles and Responsibilities
+
+**Person 1: API Integration**
+- Implement `VirusTotalAPI` class
+- Develop methods for scanning file hash, URL, and IP
+- Secure API key handling and manage requests using `requests`
+
+**Person 2: User Interface**
+- Implement `main` function
+- Design CLI for user interaction (scan file hash, URL, or IP)
+- Validate user input and format output properly
+
+**Person 3: AI Analysis and Reporting**
+- Implement `OpenAI API` for analyzing results
+- Summarize key findings with threat assessment
+- Integrate research links for further verification
+- Ensure clear and concise reporting
+
+#### Timeline & Milestones
+1. **Week 1:** Project setup, API integration, initial CLI design
+2. **Week 2:** Full CLI functionality, AI analysis implementation
+3. **Week 3:** Testing, debugging, and refining outputs
+4. **Week 4:** Final review, documentation, and deployment
+
+#### Tools & Technologies
+- Python (`requests`, `colorama`)
+- VirusTotal API
+- OpenAI GPT API
+
+#### Success Criteria
+- Functional CLI with real-time security scans
+- Accurate AI-generated analysis reports
+- Clear and structured outputs for users
