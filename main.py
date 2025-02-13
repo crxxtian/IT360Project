@@ -27,3 +27,5 @@ if __name__ == "__main__":
     sample_hash = input("Enter file hash to scan: ").strip()
     result = vt.scan_hash(sample_hash)
     print(result)
+
+#Version 1
