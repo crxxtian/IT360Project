@@ -1,6 +1,12 @@
 import os
+import json
 import requests
 from dotenv import load_dotenv
+from datetime import datetime
+from colorama import Fore, Style, init
+
+# Initialize colorama for color output
+init(autoreset=True)
 
 # Load API key from .env file
 load_dotenv()
@@ -20,12 +26,44 @@ class VirusTotalAPI:
         response = requests.get(url, headers=self.headers)
         return response.json() if response.status_code == 200 else {"error": "Failed to retrieve data"}
 
+def format_virus_total_response(response):
+    """ Extracts and formats key information from the VirusTotal API response. """
+    if "data" not in response:
+        return Fore.RED + "Invalid or missing data in response."
+    
+    attributes = response["data"]["attributes"]
+    
+    first_submission = datetime.utcfromtimestamp(attributes.get("first_submission_date", 0)).strftime('%Y-%m-%d %H:%M:%S')
+    
+    output = f"""
+    {Fore.CYAN}{Style.BRIGHT}🔍 VirusTotal Scan Report{Style.RESET_ALL}
+    {Fore.GREEN}-----------------------------------{Style.RESET_ALL}
+    📂 {Fore.YELLOW}File Name:{Style.RESET_ALL} {attributes.get("meaningful_name", "Unknown")}
+    📏 {Fore.YELLOW}File Size:{Style.RESET_ALL} {attributes.get("size", "Unknown")} bytes
+    🔢 {Fore.YELLOW}SHA256:{Style.RESET_ALL} {attributes.get("sha256")}
+    🏷 {Fore.YELLOW}Type:{Style.RESET_ALL} {attributes.get("type_description", "Unknown")}
+    🕒 {Fore.YELLOW}First Submission Date:{Style.RESET_ALL} {first_submission}
+    
+    {Fore.RED}⚠️ Detection Summary{Style.RESET_ALL}
+    {Fore.GREEN}--------------------------{Style.RESET_ALL}
+    🚨 {Fore.RED}Malicious Detections:{Style.RESET_ALL} {attributes["last_analysis_stats"]["malicious"]}
+    🛡 {Fore.BLUE}Undetected:{Style.RESET_ALL} {attributes["last_analysis_stats"]["undetected"]}
+    
+    📊 {Fore.YELLOW}Popular Threat Classification:{Style.RESET_ALL}
+    {json.dumps(attributes.get("popular_threat_classification", {}), indent=4)}
+    
+    🔗 {Fore.MAGENTA}VirusTotal Report Link:{Style.RESET_ALL}
+    {response["data"]["links"]["self"]}
+    """
+    return output
+
 if __name__ == "__main__":
     vt = VirusTotalAPI(API_KEY)
     
-    # Example hash for testing
-    sample_hash = input("Enter file hash to scan: ").strip()
-    result = vt.scan_hash(sample_hash)
-    print(result)
-
-#Version 1
+    # User input for file hash
+    file_hash = input(Fore.CYAN + "Enter file hash to scan: " + Style.RESET_ALL).strip()
+    
+    # Fetch and display results
+    result = vt.scan_hash(file_hash)
+    formatted_report = format_virus_total_response(result)
+    print(formatted_report)
